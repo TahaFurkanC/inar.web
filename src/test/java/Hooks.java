@@ -46,11 +46,11 @@ public class Hooks {
 			driver.navigate().refresh();
 		}
 	}
-
-	@AfterAll
-	public static void tearDown() {
-		if (driver != null)
-			driver.quit();
-	}
+//
+//	@AfterAll
+//	public static void tearDown() {
+//		if (driver != null)
+//			driver.quit();
+//	}
 
 }

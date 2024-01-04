@@ -7,30 +7,22 @@ import org.openqa.selenium.support.ui.Select;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class WO_007_OP_02 extends Hooks{
+public class WO_009_OP_04 extends Hooks {
     /**
-     * 1-) Open the URL.
-     * 2-) Click "WebOrder" button on top bar.
-     * 3-) Enter valid username "Inar" and password "Academy".
-     * 4-) Navigate to the order page.
-     * 5-) Select "FamilyAlbum" from Product dropdown.
-     * 6-) Enter "3" as quantity number.
-     * 7-) Enter "17" as discount percentage.
-     * 8-) Enter "Inar Academy" as Name.
-     * 9-) Enter "1100 Congress Ave" as Street.
-     * 10-) Enter "Austin" as City.
-     * 11-) Enter "TX" State.
-     * 12-) Enter "78701" as Zip Code(number).
-     * 13-) Select "Mastercard" as Card Type.
-     * 14-) Enter "5162738261027163" as Card Number.
-     * 15-) Enter "11/28" Expire Date(mm/yy format).
-     * 16-) Click "Process"" button.
-     * 17-) Verify the invalid Product Information error message is displayed.
+     * 1-) Open the URL. 2-) Click "WebOrder" button on top bar. 3-) Enter valid username
+     * "Inar" and password "Academy". 4-) Navigate to the order page. 5-) Select
+     * "SportsEquipment" from Product dropdown. 6-) Enter "1" as quantity number. 7-) Enter
+     * "10" as discount percentage. 8-) Click on the "Calculate" button. 9-) Enter "Inar
+     * Academy" as Name. 10-) Enter "1100 Congress Ave" as Street. 11-) Enter "Austin" as
+     * City. 12-) Enter "TX" State. 13-) Enter "78701" as Zip Code(number). 14-) Enter
+     * "4938220192845" as Card Number. 15-) Enter "09/26" Expire Date(mm/yy format). 16-)
+     * Click "Process"" button. 17-) Verify the Card Type error message is displayed.
      */
-    final int QUANTITY = 3;
-    final int DISCOUNT = 17;
+    final int QUANTITY = 1;
+    final int DISCOUNT = 10;
+
     @Test
-    void verifyOrderPlacementWithoutCalculation(){
+    void verifyOrderPlacementWithoutCardType() {
         WebElement webOrderTag = driver.findElement(By.cssSelector("[href='/weborder']"));
         webOrderTag.click();
 
@@ -49,8 +41,8 @@ public class WO_007_OP_02 extends Hooks{
         WebElement orderPageTab = driver.findElement(By.cssSelector("[href='/weborder/order']"));
         orderPageTab.click();
 
-        Select homeDecor = new Select(driver.findElement(By.id("productSelect")));
-        homeDecor.selectByValue("FamilyAlbum");
+        Select sportsEquipment = new Select(driver.findElement(By.id("productSelect")));
+        sportsEquipment.selectByValue("SportsEquipment");
 
         WebElement quantity = driver.findElement(By.id("quantityInput"));
         quantity.sendKeys(QUANTITY + "");
@@ -66,6 +58,8 @@ public class WO_007_OP_02 extends Hooks{
             throw new RuntimeException(e);
         }
 
+        WebElement calculateButton = driver.findElement(By.xpath("//button[@type='submit'][1]"));
+        calculateButton.click();
 
         WebElement nameText = driver.findElement(By.id("name"));
         nameText.sendKeys("Inar Academy");
@@ -89,20 +83,18 @@ public class WO_007_OP_02 extends Hooks{
             throw new RuntimeException(e);
         }
 
-        WebElement cardType = driver.findElement(By.id("mastercard"));
-        cardType.click();
-
         WebElement cardNo = driver.findElement(By.id("cardNumber"));
-        cardNo.sendKeys("5162738261027163");
+        cardNo.sendKeys("4938220192845");
 
         WebElement expiryDateText = driver.findElement(By.id("expiryDate"));
-        expiryDateText.sendKeys("11/28");
+        expiryDateText.sendKeys("09/26");
 
         WebElement processButton = driver.findElement(By.xpath("//button[contains(text(),'Process')]"));
         processButton.click();
 
-        WebElement errorMessageText = driver.findElement(By.xpath("//em[contains(text(),'Fix errors in Product Information')]"));
-        String relativeMessage = errorMessageText.getText();
-        assertEquals("Fix errors in Product Information",relativeMessage,"An error message should be displayed indicating that the product information is invalid");
+        WebElement errorElement = driver.findElement(By.xpath("//em[text()='Card type cannot be empty']"));
+        String errorMessage = errorElement.getText();
+        assertEquals("Card type cannot be empty", errorMessage);
+
     }
 }

@@ -5,6 +5,13 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class WO_006_OP_01 extends Hooks {
@@ -31,99 +38,136 @@ public class WO_006_OP_01 extends Hooks {
      * 20-) Verify the order is successfully place
      */
 
-    final int QUANTITY = 8;
-    final int DISCOUNT = 20;
+    public static final int NUMBER_OF_DISCOUNT = 20;
 
     @Test
-    void orderPlacementTest() {
-        // 2-) Click "WebOrder" button on top bar.
+    void testVerifyOrderPlacement() {
 
+        List<String> orderInput = new ArrayList<>();
+
+        orderInput.add("Inar Academy");
+        orderInput.add("MyMoney");
+        orderInput.add("8");
+        orderInput.add(LocalDate.now().format(DateTimeFormatter.ofPattern("MM/dd/yyyy")));
+        orderInput.add("1100 Congress Ave");
+        orderInput.add("Austin");
+        orderInput.add("TX");
+        orderInput.add("78701");
+        orderInput.add("Visa");
+        orderInput.add("4938281746192845");
+        orderInput.add("11/28");
+
+        // 2-) Click "WebOrder" button on top bar.
         WebElement webOrderTag = driver.findElement(By.cssSelector("[href='/weborder']"));
         webOrderTag.click();
 
         // 3-) Enter "Inar" as username and "Academy" password.
-
         WebElement userNameText = driver.findElement(By.id("login-username-input"));
         userNameText.sendKeys("Inar");
         WebElement passwordText = driver.findElement(By.id("login-password-input"));
         passwordText.sendKeys("Academy");
-
         WebElement loginButton = driver.findElement(By.id("login-button"));
         loginButton.click();
 
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.id("welcome-heading")));
-        //4-) Navigate to the order page.
+        // 4-) Navigate to the order page.
         WebElement orderPageTab = driver.findElement(By.cssSelector("[href='/weborder/order']"));
         orderPageTab.click();
 
-        Select homeDecor = new Select(driver.findElement(By.id("productSelect")));
-        homeDecor.selectByValue("MyMoney");
+        // 5-) Select "MyMoney" from Product dropdown.
+        Select select = new Select(driver.findElement(By.id("productSelect")));
+        select.selectByValue(orderInput.get(1));
 
-        WebElement quantity = driver.findElement(By.id("quantityInput"));
-        quantity.sendKeys(QUANTITY + "");
+        // 6-) Enter "8" as quantity number.
 
-        WebElement discount = driver.findElement(By.id("discountInput"));
-        discount.sendKeys(DISCOUNT + "");
+        WebElement quantityBox = driver.findElement(By.id("quantityInput"));
+        quantityBox.sendKeys(orderInput.get(2));
+
+        // 7-) Enter "20" as discount percentage.
+        WebElement discountBox = driver.findElement(By.id("discountInput"));
+        discountBox.sendKeys(NUMBER_OF_DISCOUNT + "");
 
         JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript("window.scroll(0,250)");
+        js.executeScript("window.scroll(0,500)");
+
         try {
             Thread.sleep(2000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+        //driver.manage().timeouts().implicitlyWait(5,TimeUnit.SECONDS);
 
-        WebElement calculateButton = driver.findElement(By.xpath("//button[@type='submit'][1]"));
+        // 8-) Click on the "Calculate" button.
+        WebElement calculateButton = driver.findElement(By.xpath("//button[@type='submit']"));
         calculateButton.click();
 
-        WebElement nameText = driver.findElement(By.id("name"));
-        nameText.sendKeys("Inar Academy");
+        // 9-) Enter "Inar Academy" as Name
+        WebElement nameBox = driver.findElement(By.id("name"));
+        nameBox.sendKeys(orderInput.get(0));
 
-        WebElement streetText = driver.findElement(By.id("street"));
-        streetText.sendKeys("1100 Congress Ave");
+        // 10-) Enter "1100 Congress Ave" as Street.
+        WebElement streetBox = driver.findElement(By.id("street"));
+        streetBox.sendKeys(orderInput.get(4));
 
-        js.executeScript("window.scroll(0,250)");
+        // 11-) Enter "Austin" as City.
+        WebElement cityBox = driver.findElement(By.id("city"));
+        cityBox.sendKeys(orderInput.get(5));
+
+        // 12-) Enter "TX" State.
+        WebElement stateBox = driver.findElement(By.id("state"));
+        stateBox.sendKeys(orderInput.get(6));
+
+        // 13-) Enter "78701" as Zip Code(number).
+        WebElement zipBox = driver.findElement(By.id("zip"));
+        zipBox.sendKeys(orderInput.get(7));
+
+        js.executeScript("window.scroll(0,800)");
+
         try {
-            Thread.sleep(2000);
+            Thread.sleep(3000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+        // 14-) Select "Visa" as Card Type.
+        WebElement cardBox = driver.findElement(By.id("visa"));
+        cardBox.click();
 
-        WebElement cityText = driver.findElement(By.id("city"));
-        streetText.sendKeys("Austin");
-
-        WebElement stateText = driver.findElement(By.id("state"));
-        streetText.sendKeys("TX");
-
-        WebElement zipText = driver.findElement(By.id("zip"));
-        streetText.sendKeys("78701");
-
-        js.executeScript("window.scroll(0,1000)");
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-
-        WebElement cardType = driver.findElement(By.id("visa"));
-        cardType.click();
-
+        // 15-) Enter "4938281746192845" as Card Number.
         WebElement cardNo = driver.findElement(By.id("cardNumber"));
-        cardNo.sendKeys("4938281746192845");
+        cardNo.sendKeys(orderInput.get(9));
 
-        WebElement expiryDateText = driver.findElement(By.id("expiryDate"));
-        expiryDateText.sendKeys("11/28");
+        // 16-) Enter "11/28" Expire Date(mm/yy format)
+        WebElement expireDateBox = driver.findElement(By.id("expiryDate"));
+        expireDateBox.sendKeys(orderInput.get(10));
 
-        WebElement processButton = driver.findElement(By.xpath("//button[contains(text(),'Process')]"));
+        // 17-) Click "Process"" button
+        WebElement processButton = driver.findElement(By.xpath("(//button[@type='submit'])[2]"));
         processButton.click();
 
-        WebElement alertMessageText = driver.findElement(By.xpath("//div[@role='alert']"));
-        String alertMessage = alertMessageText.getText();
-        assertEquals("New order has been successfully added.",alertMessage);
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 
-        WebElement viewAllOrdersTab = driver.findElement(By.xpath("//a[contains(text(),'View all products')]"));
+
+        // 18-) Verify the confirmation message is displayed.
+        WebElement newOrderMessage = driver.findElement(By.cssSelector("div[role='alert']"));
+        String verifyMessage = newOrderMessage.getText();
+        assertEquals("New order has been successfully added.", verifyMessage,
+                "new order message should be after ordering");
+
+        js.executeScript("window.scroll(0,-1000)");
+
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        // 19-) Navigate to view all orders page.
+        WebElement viewAllOrdersTab = driver.findElement(By.cssSelector("a[href='/weborder/view-orders']"));
         viewAllOrdersTab.click();
 
-
+        //20-) Verify the order is successfully place
+        List<WebElement> row = driver.findElements(By.xpath("//tbody/tr"));
+        List<WebElement> rowDatas = row.get(row.size() -1).findElements(By.xpath("//td"));
+        for(int i = 0; i < orderInput.size(); i++){
+            assertEquals(orderInput.get(i),rowDatas.get(i+1).getText());
+        }
     }
 }
